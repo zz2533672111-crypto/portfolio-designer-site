@@ -1,0 +1,7 @@
+node_modules/
+dist/
+tools/cloudflared.exe
+.DS_Store
+*.log
+.env
+.env.local
