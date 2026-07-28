@@ -13,7 +13,7 @@ import './styles.css';
 
 const profile = {
   name: 'Designer Name',
-  title: 'AI 训练师 / 生成式 AI 工作流设计师',
+  title: '视觉设计师 / AI 设计师 / AI 训练师 / 品牌设计师',
   intro:
     '我把提示词、样本组织、视觉判断与评估标准整理成可复用的 AI 训练流程，让团队能够更稳定地生成、筛选和交付高质量内容。',
   email: 'hello@example.com',
@@ -37,6 +37,10 @@ const projects = [
     summary: '围绕夜海、飞鱼、星光漩涡和临海城镇，建立一套叙事海报的生成变量与视觉评估规则。',
     phrase: '把抽象故事词，拆成可控制的构图、光线、密度与情绪变量。',
     services: ['Prompt System', 'Composition Evaluation', 'Style Control'],
+    role: '任务拆解 / 提示词结构 / 视觉评估',
+    goal: '生成一张可被记住的叙事电影海报，同时沉淀稳定的构图提示词。',
+    method: '把夜海、鱼群、光源、人物、标题留白拆成变量，分轮测试并记录有效组合。',
+    outcome: '完成主海报与一套可复用的叙事海报训练规则。',
     training: [
       { label: '训练目标', text: '生成具有垂直叙事、发光鱼群和海天漩涡的电影海报。' },
       { label: '输入组织', text: '拆分夜海、月亮、城镇、人物、鱼群路径和中心光源。' },
@@ -55,6 +59,10 @@ const projects = [
     summary: '以听、看、说三种动作建立人物海报系统，控制灰阶、服装、人物比例、留白与信息层级。',
     phrase: '让不同人物保持统一的动作语义、视觉节奏与品牌识别。',
     services: ['Sample Curation', 'Pose Consistency', 'Campaign System'],
+    role: '样本筛选 / 姿态控制 / 系列视觉规范',
+    goal: '建立一组冷静、统一、可延展的人物海报视觉系统。',
+    method: '以听、看、说为动作母题，控制灰阶、白衣、人物比例和信息区留白。',
+    outcome: '形成 Echo 系列海报方向，可继续扩展为专辑、巡演和社媒视觉。',
     images: ['/work-images/echo-album-poster.png'],
     tone: 'silver',
     format: 'poster',
@@ -66,6 +74,10 @@ const projects = [
     summary: '将桂花、绿叶结构、波浪展墙和沉浸动线整理成空间视觉方向与落地效果图。',
     phrase: '把自然意象、空间限制与品牌叙事收束成可进入的视觉体验。',
     services: ['Spatial Design', 'Visual Direction', '3D Delivery'],
+    role: '空间视觉方向 / 叙事动线 / 效果图整理',
+    goal: '把桂花意象转译成可进入、可展示、可沟通的品牌空间体验。',
+    method: '提取绿叶结构、波浪展墙、中心装置和参观路径，分成外部、室内、俯视与氛围图。',
+    outcome: '完成一组结构清楚的空间效果图，便于展示设计概念和落地关系。',
     images: [
       '/work-images/osmanthus-exterior-01.jpg',
       '/work-images/osmanthus-interior-01.jpg',
@@ -84,6 +96,9 @@ const posterCases = projects
     type: project.type,
     year: project.year,
     summary: project.summary,
+    goal: project.goal,
+    method: project.method,
+    outcome: project.outcome,
     label: index === 0 ? '叙事海报训练' : '系列海报训练',
   }));
 
@@ -424,7 +439,9 @@ function RanbiwaMotifs() {
   );
 }
 
-function DynamicCrossField() {
+function DynamicCrossField({ variant = 'page' }) {
+  const isHero = variant === 'hero';
+  const baseOpacity = isHero ? 0.46 : 0.42;
   const [points, setPoints] = useState([]);
   const crossRefs = useRef([]);
   const mouseRef = useRef({ x: -9999, y: -9999 });
@@ -432,7 +449,7 @@ function DynamicCrossField() {
 
   useEffect(() => {
     const buildGrid = () => {
-      const spacing = 56;
+      const spacing = isHero ? 74 : 64;
       const cols = Math.ceil(window.innerWidth / spacing) + 4;
       const rows = Math.ceil(window.innerHeight / spacing) + 4;
       const nextPoints = [];
@@ -458,21 +475,26 @@ function DynamicCrossField() {
     buildGrid();
     window.addEventListener('resize', buildGrid);
     return () => window.removeEventListener('resize', buildGrid);
-  }, []);
+  }, [isHero]);
 
   useEffect(() => {
     const resetCrosses = () => {
       crossRefs.current.forEach((cross) => {
         if (!cross) return;
-        cross.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
-        cross.style.opacity = '0.5';
+        cross.style.transform = 'translate3d(0, 0, 0) rotate(0deg) scale(1)';
+        cross.style.opacity = String(baseOpacity);
       });
     };
 
     const updateCrosses = () => {
       const { x: mouseX, y: mouseY } = mouseRef.current;
-      const radius = 118;
-      const strength = 22;
+      if (isHero && window.scrollY > window.innerHeight * 1.05) {
+        frameRef.current = 0;
+        return;
+      }
+
+      const radius = isHero ? 184 : 172;
+      const strength = isHero ? 28 : 32;
 
       crossRefs.current.forEach((cross) => {
         if (!cross) return;
@@ -488,11 +510,13 @@ function DynamicCrossField() {
           const angle = Math.atan2(deltaY, deltaX);
           const moveX = Math.cos(angle) * force * strength;
           const moveY = Math.sin(angle) * force * strength;
-          cross.style.transform = `translate3d(${moveX}px, ${moveY}px, 0) rotate(${moveX * 1.2}deg)`;
-          cross.style.opacity = String(0.58 + force * 0.42);
+          const scale = 1 + force * 0.48;
+          const rotate = (moveX - moveY) * 1.35;
+          cross.style.transform = `translate3d(${moveX}px, ${moveY}px, 0) rotate(${rotate}deg) scale(${scale})`;
+          cross.style.opacity = String((isHero ? 0.62 : 0.56) + force * (isHero ? 0.34 : 0.4));
         } else {
-          cross.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
-          cross.style.opacity = '0.5';
+          cross.style.transform = 'translate3d(0, 0, 0) rotate(0deg) scale(1)';
+          cross.style.opacity = String(baseOpacity);
         }
       });
 
@@ -516,21 +540,22 @@ function DynamicCrossField() {
       window.removeEventListener('blur', resetCrosses);
       if (frameRef.current) window.cancelAnimationFrame(frameRef.current);
     };
-  }, [points]);
+  }, [baseOpacity, isHero, points]);
 
   return (
-    <div className="cross-field" aria-hidden="true">
+    <div className={`cross-field ${isHero ? 'hero-cross-field' : 'page-cross-field'}`} aria-hidden="true">
       {points.map((point, index) => (
         <span
           className="cross-dot"
           data-kind={point.kind}
           data-x={point.x}
           data-y={point.y}
+          data-point-id={point.id}
           key={point.id}
           ref={(node) => {
             crossRefs.current[index] = node;
           }}
-          style={{ left: point.x, top: point.y }}
+          style={{ left: point.x, top: point.y, opacity: baseOpacity }}
         />
       ))}
     </div>
@@ -652,7 +677,9 @@ function Hero() {
         <div className="motion-fallback" />
         <FolkMotionScene />
         <NarrativePortal />
-        <div className="crow-spiral-stage static-crow">
+      </div>
+      <DynamicCrossField variant="hero" />
+      <div className="crow-spiral-stage static-crow" aria-hidden="true">
           <ExtractedSpiral />
           <div className="crow-ink-wash" />
           <div className="crow-vignette" />
@@ -669,9 +696,9 @@ function Hero() {
           <div className="crow-grain" />
           <div className="crow-label-stack crow-content-stack" aria-hidden="true">
             <article className="crow-label-card primary">
-              <em>AI TRAINING FILE 01</em>
+              <em>AI Training Archive</em>
               <strong>训练 AI，也训练方法</strong>
-              <small>Prompt / Sample / Rubric</small>
+              <small>从审美判断到可复用流程</small>
             </article>
             <article className="crow-label-card">
               <em>Prompt Matrix</em>
@@ -688,12 +715,16 @@ function Hero() {
               <strong>让好结果稳定发生</strong>
               <small>审美标准、失败样本、交付规则</small>
             </article>
+            <article className="crow-label-card">
+              <em>Delivery System</em>
+              <strong>把结果整理成团队能继续使用的方法</strong>
+              <small>模板、规范、复盘、交付资产</small>
+            </article>
           </div>
           <div className="crow-archive-note">
             <span>Archive 01 / Folk Signal</span>
             <strong>把偶然的好结果，训练成稳定的方法。</strong>
           </div>
-        </div>
       </div>
 
       <nav className="nav" aria-label="主导航">
@@ -1236,6 +1267,30 @@ function Experience() {
 
 function Projects() {
   const featuredTraining = projects[0];
+  const [previewImage, setPreviewImage] = useState(null);
+
+  useEffect(() => {
+    if (!previewImage) return undefined;
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setPreviewImage(null);
+      }
+    };
+
+    document.body.classList.add('is-preview-open');
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.classList.remove('is-preview-open');
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [previewImage]);
+
+  const openImagePreview = (image) => {
+    setPreviewImage(image);
+  };
+
   const handleProjectPointerMove = (event) => {
     const card = event.currentTarget;
     const rect = card.getBoundingClientRect();
@@ -1291,12 +1346,37 @@ function Projects() {
             {posterCases.map((item, index) => (
               <article className="poster-case" key={item.title}>
                 <figure>
-                  <img src={item.image} alt={`${item.title} 海报`} />
+                  <button
+                    className="image-preview-trigger poster-preview-trigger"
+                    type="button"
+                    onClick={() =>
+                      openImagePreview({
+                        src: item.image,
+                        title: item.title,
+                        meta: `${item.label} / ${item.year}`,
+                        alt: `${item.title} 海报`,
+                      })
+                    }
+                    aria-label={`放大查看 ${item.title}`}
+                  >
+                    <img src={item.image} alt={`${item.title} 海报`} />
+                    <span>点击放大</span>
+                  </button>
                 </figure>
                 <div className="case-caption">
                   <span>{String(index + 1).padStart(2, '0')} / {item.label}</span>
                   <h4>{item.title}</h4>
                   <p>{item.summary}</p>
+                  <dl className="case-caption-proof">
+                    <div>
+                      <dt>目标</dt>
+                      <dd>{item.goal}</dd>
+                    </div>
+                    <div>
+                      <dt>方法</dt>
+                      <dd>{item.method}</dd>
+                    </div>
+                  </dl>
                   <em>{item.type} · {item.year}</em>
                 </div>
               </article>
@@ -1313,7 +1393,22 @@ function Projects() {
           <div className="render-case-layout">
             {renderCases.map((item, index) => (
               <figure className={`render-case render-case-${index + 1}`} key={item.image}>
-                <img src={item.image} alt={item.title} />
+                <button
+                  className="image-preview-trigger render-preview-trigger"
+                  type="button"
+                  onClick={() =>
+                    openImagePreview({
+                      src: item.image,
+                      title: item.title,
+                      meta: `${item.type} / ${item.label}`,
+                      alt: item.title,
+                    })
+                  }
+                  aria-label={`放大查看 ${item.title}`}
+                >
+                  <img src={item.image} alt={item.title} />
+                  <span>点击放大</span>
+                </button>
                 <figcaption>
                   <span>{String(index + 1).padStart(2, '0')} / {item.type}</span>
                   <strong>{item.title}</strong>
@@ -1380,14 +1475,15 @@ function Projects() {
             onPointerMove={handleProjectPointerMove}
             onPointerLeave={handleProjectPointerLeave}
           >
-            <div className="paper-note project-note">{project.year} / {project.type}</div>
-            <div className="project-chapter-mark">Chapter {String(index + 1).padStart(2, '0')}</div>
+            <div
+              className="project-meta-row"
+              aria-label={`${project.year} / ${project.type}. Chapter ${String(index + 1).padStart(2, '0')}`}
+            >
+              <span className="project-note">{project.year} / {project.type}</span>
+              <span className="project-chapter-mark">Chapter {String(index + 1).padStart(2, '0')}</span>
+            </div>
             <div className="project-image">
-              {project.images?.[0] && (
-                <img className="project-photo main-photo" src={project.images[0]} alt={`${project.title} 项目图`} />
-              )}
-              <ProjectGlyph tone={project.tone} index={index} />
-              <div className="project-media-mark" />
+              <ProjectMethodPlate project={project} index={index} />
               {project.images?.length > 1 && (
                 <div className="project-thumbs" aria-hidden="true">
                   {project.images.slice(0, 4).map((image) => (
@@ -1405,6 +1501,24 @@ function Projects() {
               <span>{project.year}</span>
             </div>
             <strong className="project-phrase">{project.phrase}</strong>
+            <dl className="project-case-brief" aria-label={`${project.title} 案例摘要`}>
+              <div>
+                <dt>我的角色</dt>
+                <dd>{project.role}</dd>
+              </div>
+              <div>
+                <dt>设计目标</dt>
+                <dd>{project.goal}</dd>
+              </div>
+              <div>
+                <dt>视觉方法</dt>
+                <dd>{project.method}</dd>
+              </div>
+              <div>
+                <dt>最终成果</dt>
+                <dd>{project.outcome}</dd>
+              </div>
+            </dl>
             <div className="project-proof-strip" aria-label={`${project.title} case proof`}>
               <span>
                 <strong>{project.images.length}</strong>
@@ -1446,6 +1560,34 @@ function Projects() {
         ))}
       </div>
 
+      {previewImage && (
+        <div
+          className="image-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label="图片放大预览"
+          onClick={() => setPreviewImage(null)}
+        >
+          <button
+            className="lightbox-close"
+            type="button"
+            autoFocus
+            onClick={() => setPreviewImage(null)}
+            aria-label="关闭图片放大预览"
+          >
+            关闭
+          </button>
+          <figure className="lightbox-panel" onClick={(event) => event.stopPropagation()}>
+            <img src={previewImage.src} alt={previewImage.alt || previewImage.title} />
+            <figcaption>
+              <span>{previewImage.meta}</span>
+              <strong>{previewImage.title}</strong>
+              <em>点击空白处或按 Esc 关闭</em>
+            </figcaption>
+          </figure>
+        </div>
+      )}
+
     </section>
   );
 }
@@ -1470,14 +1612,41 @@ function ProjectEvidenceLedger() {
             <dl>
               <div>
                 <dt>role</dt>
-                <dd>{project.services[0]}</dd>
+                <dd>{project.role}</dd>
               </div>
               <div>
-                <dt>proof</dt>
-                <dd>{project.training ? `${project.training.length} training steps` : `${project.images.length} visual scenes`}</dd>
+                <dt>output</dt>
+                <dd>{project.outcome}</dd>
               </div>
             </dl>
           </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ProjectMethodPlate({ project, index }) {
+  const notes = [
+    { label: 'Role', value: project.role },
+    { label: 'Goal', value: project.goal },
+    { label: 'Method', value: project.method },
+    { label: 'Output', value: project.outcome },
+  ];
+
+  return (
+    <div className="project-method-plate" aria-label={`${project.title} 方法档案`}>
+      <span className="method-plate-index">{String(index + 1).padStart(2, '0')}</span>
+      <div className="method-plate-head">
+        <span>Training Archive</span>
+        <strong>{project.title}</strong>
+      </div>
+      <div className="method-plate-notes">
+        {notes.map((note) => (
+          <article key={note.label}>
+            <span>{note.label}</span>
+            <p>{note.value}</p>
+          </article>
         ))}
       </div>
     </div>
