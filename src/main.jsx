@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import './styles.css';
 
+const assetUrl = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;
+
 const profile = {
   name: 'Designer Name',
   title: '视觉设计师 / AI 设计师 / AI 训练师 / 品牌设计师',
@@ -48,7 +50,7 @@ const projects = [
       { label: '评估标准', text: '检查视觉焦点、鱼群连贯性、空间层级和标题可读区域。' },
       { label: '最终结果', text: '形成高完成度主海报和可复用的叙事构图提示词结构。' },
     ],
-    images: ['/work-images/flying-fish-poster.png'],
+    images: [assetUrl('work-images/flying-fish-poster.png')],
     tone: 'navy',
     format: 'poster',
   },
@@ -63,7 +65,7 @@ const projects = [
     goal: '建立一组冷静、统一、可延展的人物海报视觉系统。',
     method: '以听、看、说为动作母题，控制灰阶、白衣、人物比例和信息区留白。',
     outcome: '形成 Echo 系列海报方向，可继续扩展为专辑、巡演和社媒视觉。',
-    images: ['/work-images/echo-album-poster.png'],
+    images: [assetUrl('work-images/echo-album-poster.png')],
     tone: 'silver',
     format: 'poster',
   },
@@ -79,10 +81,10 @@ const projects = [
     method: '提取绿叶结构、波浪展墙、中心装置和参观路径，分成外部、室内、俯视与氛围图。',
     outcome: '完成一组结构清楚的空间效果图，便于展示设计概念和落地关系。',
     images: [
-      '/work-images/osmanthus-exterior-01.jpg',
-      '/work-images/osmanthus-interior-01.jpg',
-      '/work-images/osmanthus-exterior-02.jpg',
-      '/work-images/spatial-render-01.jpg',
+      assetUrl('work-images/osmanthus-exterior-01.jpg'),
+      assetUrl('work-images/osmanthus-interior-01.jpg'),
+      assetUrl('work-images/osmanthus-exterior-02.jpg'),
+      assetUrl('work-images/spatial-render-01.jpg'),
     ],
     tone: 'slate',
   },
@@ -104,25 +106,25 @@ const posterCases = projects
 
 const renderCases = [
   {
-    image: '/work-images/osmanthus-exterior-01.jpg',
+    image: assetUrl('work-images/osmanthus-exterior-01.jpg'),
     title: '桂花空间外部主视觉',
     type: 'Exterior Render',
     label: '整体空间效果',
   },
   {
-    image: '/work-images/osmanthus-interior-01.jpg',
+    image: assetUrl('work-images/osmanthus-interior-01.jpg'),
     title: '桂花空间室内动线',
     type: 'Interior Render',
     label: '沉浸体验路线',
   },
   {
-    image: '/work-images/osmanthus-exterior-02.jpg',
+    image: assetUrl('work-images/osmanthus-exterior-02.jpg'),
     title: '桂花空间俯视结构',
     type: 'Top View Render',
     label: '结构与节点关系',
   },
   {
-    image: '/work-images/spatial-render-01.jpg',
+    image: assetUrl('work-images/spatial-render-01.jpg'),
     title: '展厅氛围效果图',
     type: 'Atmosphere Render',
     label: '空间情绪与收尾',
@@ -196,22 +198,22 @@ const experiencePillars = [
 
 const immersiveReelFrames = [
   {
-    src: '/work-images/osmanthus-exterior-01.jpg',
+    src: assetUrl('work-images/osmanthus-exterior-01.jpg'),
     label: 'Exterior',
     title: 'Open Scene',
   },
   {
-    src: '/work-images/osmanthus-interior-01.jpg',
+    src: assetUrl('work-images/osmanthus-interior-01.jpg'),
     label: 'Interior',
     title: 'Brand Route',
   },
   {
-    src: '/work-images/osmanthus-exterior-02.jpg',
+    src: assetUrl('work-images/osmanthus-exterior-02.jpg'),
     label: 'Top View',
     title: 'Spatial System',
   },
   {
-    src: '/work-images/spatial-render-01.jpg',
+    src: assetUrl('work-images/spatial-render-01.jpg'),
     label: 'Panorama',
     title: 'Final World',
   },
