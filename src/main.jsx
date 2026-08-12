@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import {
   ArrowRight,
@@ -10,6 +11,7 @@ import {
   PenTool,
 } from 'lucide-react';
 import './styles.css';
+import './polish.css';
 
 const assetUrl = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;
 
@@ -275,6 +277,7 @@ function App() {
       <StoryTotem placement="ambient" />
       <RanbiwaMotifs />
       <ScrollNarrative />
+      <SiteNav />
       <main className="site-shell">
         <Hero />
         <ConceptIntro />
@@ -287,6 +290,27 @@ function App() {
         <Contact />
       </main>
     </>
+  );
+}
+
+function SiteNav() {
+  return (
+    <nav className="nav" aria-label="主导航">
+      <a href="#top" className="brand">
+        <span className="brand-dot" />
+        <span>{profile.name}</span>
+      </a>
+      <div className="nav-links">
+        <a href="#projects">案例</a>
+        <a href="#approach">方法</a>
+        <a href="#experience">经历</a>
+        <a href="#contact">联系</a>
+      </div>
+      <a className="nav-contact" href={`mailto:${profile.email}`}>
+        <Mail size={15} />
+        联系我
+      </a>
+    </nav>
   );
 }
 
@@ -652,29 +676,8 @@ function HeroMotionClip() {
 }
 
 function Hero() {
-  const handleHeroPointerMove = (event) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width - 0.5;
-    const y = (event.clientY - rect.top) / rect.height - 0.5;
-
-    event.currentTarget.style.setProperty('--hero-pointer-x', `${(x * 24).toFixed(2)}px`);
-    event.currentTarget.style.setProperty('--hero-pointer-y', `${(y * 18).toFixed(2)}px`);
-    event.currentTarget.style.setProperty('--hero-pointer-rotate', `${(x * 2.4).toFixed(2)}deg`);
-  };
-
-  const handleHeroPointerLeave = (event) => {
-    event.currentTarget.style.setProperty('--hero-pointer-x', '0px');
-    event.currentTarget.style.setProperty('--hero-pointer-y', '0px');
-    event.currentTarget.style.setProperty('--hero-pointer-rotate', '0deg');
-  };
-
   return (
-    <section
-      className="hero section-full"
-      id="top"
-      onPointerMove={handleHeroPointerMove}
-      onPointerLeave={handleHeroPointerLeave}
-    >
+    <section className="hero section-full" id="top">
       <div className="video-backdrop" aria-hidden="true">
         <div className="motion-fallback" />
         <FolkMotionScene />
@@ -728,23 +731,6 @@ function Hero() {
             <strong>把偶然的好结果，训练成稳定的方法。</strong>
           </div>
       </div>
-
-      <nav className="nav" aria-label="主导航">
-        <a href="#top" className="brand">
-          <span className="brand-dot" />
-          <span>{profile.name}</span>
-        </a>
-        <div className="nav-links">
-          <a href="#projects">案例</a>
-          <a href="#approach">方法</a>
-          <a href="#experience">经历</a>
-          <a href="#contact">联系</a>
-        </div>
-        <a className="nav-contact" href={`mailto:${profile.email}`}>
-          <Mail size={15} />
-          联系我
-        </a>
-      </nav>
 
       <div className="container hero-content">
         <div className="hero-kicker">
@@ -1328,7 +1314,7 @@ function Projects() {
 
       <div className="container work-index-list" aria-label="精选项目索引">
         {projects.map((project, index) => (
-          <a href={`#project-${index + 1}`} key={project.title}>
+          <a href={index < 2 ? `#project-preview-${index + 1}` : '#project-preview-3'} key={project.title}>
             <span>{String(index + 1).padStart(2, '0')}</span>
             <strong>{project.title}</strong>
             <em>{project.services.join(' • ')}</em>
@@ -1346,7 +1332,7 @@ function Projects() {
           </div>
           <div className="poster-case-grid">
             {posterCases.map((item, index) => (
-              <article className="poster-case" key={item.title}>
+              <article className="poster-case" id={`project-preview-${index + 1}`} key={item.title}>
                 <figure>
                   <button
                     className="image-preview-trigger poster-preview-trigger"
@@ -1357,6 +1343,7 @@ function Projects() {
                         title: item.title,
                         meta: `${item.label} / ${item.year}`,
                         alt: `${item.title} 海报`,
+                        layout: 'poster',
                       })
                     }
                     aria-label={`放大查看 ${item.title}`}
@@ -1386,7 +1373,11 @@ function Projects() {
           </div>
         </section>
 
-        <section className="case-block render-showcase" aria-labelledby="render-showcase-title">
+        <section
+          className="case-block render-showcase"
+          id="project-preview-3"
+          aria-labelledby="render-showcase-title"
+        >
           <div className="case-block-heading">
             <span>Spatial Renders</span>
             <h3 id="render-showcase-title">效果图独立排版，按空间叙事顺序展示。</h3>
@@ -1404,6 +1395,7 @@ function Projects() {
                       title: item.title,
                       meta: `${item.type} / ${item.label}`,
                       alt: item.title,
+                      layout: 'landscape',
                     })
                   }
                   aria-label={`放大查看 ${item.title}`}
@@ -1422,9 +1414,18 @@ function Projects() {
         </section>
       </div>
 
-      <ProjectEvidenceLedger />
+      <details className="project-deep-dive">
+        <summary className="container project-deep-summary">
+          <span>完整训练档案</span>
+          <strong>展开角色、目标、评估与交付证据</strong>
+          <em>3 Cases / Full Method Archive</em>
+          <i aria-hidden="true" />
+        </summary>
 
-      <div className="container training-case-overview">
+        <div className="project-deep-content">
+          <ProjectEvidenceLedger />
+
+          <div className="container training-case-overview">
         <article className="training-case-intro">
           <span>Case 01 / AI Visual Training</span>
           <h3>把审美判断，变成可以重复执行的训练规则。</h3>
@@ -1466,17 +1467,17 @@ function Projects() {
           <span>Evaluation Rubric</span>
           <span>Iteration Log</span>
         </div>
-      </div>
+          </div>
 
-      <div className="container project-list">
-        {projects.map((project, index) => (
-          <article
-            id={`project-${index + 1}`}
-            className={`project-card ${project.tone} ${project.format || ''} ${project.training ? 'has-training' : ''}`}
-            key={project.title}
-            onPointerMove={handleProjectPointerMove}
-            onPointerLeave={handleProjectPointerLeave}
-          >
+          <div className="container project-list">
+            {projects.map((project, index) => (
+              <article
+                id={`project-${index + 1}`}
+                className={`project-card ${project.tone} ${project.format || ''} ${project.training ? 'has-training' : ''}`}
+                key={project.title}
+                onPointerMove={handleProjectPointerMove}
+                onPointerLeave={handleProjectPointerLeave}
+              >
             <div
               className="project-meta-row"
               aria-label={`${project.year} / ${project.type}. Chapter ${String(index + 1).padStart(2, '0')}`}
@@ -1558,11 +1559,13 @@ function Projects() {
               View Training Case
               <MoveUpRight size={18} />
             </a>
-          </article>
-        ))}
-      </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </details>
 
-      {previewImage && (
+      {previewImage && createPortal(
         <div
           className="image-lightbox"
           role="dialog"
@@ -1579,7 +1582,10 @@ function Projects() {
           >
             关闭
           </button>
-          <figure className="lightbox-panel" onClick={(event) => event.stopPropagation()}>
+          <figure
+            className={`lightbox-panel ${previewImage.layout || ''}`}
+            onClick={(event) => event.stopPropagation()}
+          >
             <img src={previewImage.src} alt={previewImage.alt || previewImage.title} />
             <figcaption>
               <span>{previewImage.meta}</span>
@@ -1587,7 +1593,8 @@ function Projects() {
               <em>点击空白处或按 Esc 关闭</em>
             </figcaption>
           </figure>
-        </div>
+        </div>,
+        document.body,
       )}
 
     </section>
