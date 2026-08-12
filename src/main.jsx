@@ -1697,7 +1697,13 @@ function VisualGallery() {
               onClick={() => setPreviewImage(item)}
               aria-label={`放大查看 ${item.title}`}
             >
-              <img src={item.image} alt={item.title} />
+              <img
+                src={item.image}
+                alt={item.title}
+                loading={index < 2 ? 'eager' : 'lazy'}
+                decoding="async"
+                fetchPriority={index === 0 ? 'high' : 'auto'}
+              />
             </button>
           </figure>
         ))}
