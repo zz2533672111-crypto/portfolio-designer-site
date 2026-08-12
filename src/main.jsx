@@ -133,6 +133,44 @@ const renderCases = [
   },
 ];
 
+const collectionCases = [
+  {
+    image: assetUrl('work-images/collection-01.webp'),
+    title: 'Junior Style 杂志封面',
+    layout: 'portrait',
+  },
+  {
+    image: assetUrl('work-images/collection-02.webp'),
+    title: 'Lumiere 杂志封面',
+    layout: 'portrait',
+  },
+  {
+    image: assetUrl('work-images/collection-03.webp'),
+    title: '双生河畔摄影',
+    layout: 'landscape',
+  },
+  {
+    image: assetUrl('work-images/collection-04.webp'),
+    title: '金色逆光肖像',
+    layout: 'portrait',
+  },
+  {
+    image: assetUrl('work-images/collection-05.webp'),
+    title: 'Kinfolk 镜面人像封面',
+    layout: 'portrait',
+  },
+  {
+    image: assetUrl('work-images/collection-06.jpg'),
+    title: '海边纪实摄影',
+    layout: 'landscape',
+  },
+  {
+    image: assetUrl('work-images/collection-07.webp'),
+    title: '飞鱼之海另一版海报',
+    layout: 'poster',
+  },
+];
+
 const strengths = [
   {
     icon: PenTool,
@@ -1665,6 +1703,7 @@ function VisualGallery() {
       title: item.title,
       layout: index === renderCases.length - 1 ? 'panorama' : 'landscape',
     })),
+    ...collectionCases,
   ];
 
   useEffect(() => {

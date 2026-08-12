@@ -1405,6 +1405,22 @@ body {
   grid-column: 1 / -1;
 }
 
+.minimal-work-7,
+.minimal-work-8,
+.minimal-work-10,
+.minimal-work-11 {
+  grid-column: span 6;
+}
+
+.minimal-work-9,
+.minimal-work-12 {
+  grid-column: 1 / -1;
+}
+
+.minimal-work-13 {
+  grid-column: 4 / span 6;
+}
+
 .minimal-work button {
   position: relative;
   display: grid;
@@ -1421,6 +1437,10 @@ body {
 
 .minimal-work.poster button {
   aspect-ratio: 2 / 3;
+}
+
+.minimal-work.portrait button {
+  aspect-ratio: 4 / 5;
 }
 
 .minimal-work.landscape button {
@@ -1452,7 +1472,8 @@ body {
 .minimal-lightbox-panel,
 .minimal-lightbox-panel.poster,
 .minimal-lightbox-panel.landscape,
-.minimal-lightbox-panel.panorama {
+.minimal-lightbox-panel.panorama,
+.minimal-lightbox-panel.portrait {
   display: grid;
   grid-template-columns: 1fr;
   width: min(94vw, 1540px);
@@ -1466,10 +1487,15 @@ body {
   width: min(92vw, 820px);
 }
 
+.minimal-lightbox-panel.portrait {
+  width: min(92vw, 880px);
+}
+
 .minimal-lightbox-panel img,
 .minimal-lightbox-panel.poster img,
 .minimal-lightbox-panel.landscape img,
-.minimal-lightbox-panel.panorama img {
+.minimal-lightbox-panel.panorama img,
+.minimal-lightbox-panel.portrait img {
   width: 100%;
   height: auto;
   max-height: calc(100vh - 140px);
@@ -1522,14 +1548,22 @@ body {
   .minimal-work-3,
   .minimal-work-4,
   .minimal-work-5,
-  .minimal-work-6 {
+  .minimal-work-6,
+  .minimal-work-7,
+  .minimal-work-8,
+  .minimal-work-9,
+  .minimal-work-10,
+  .minimal-work-11,
+  .minimal-work-12,
+  .minimal-work-13 {
     grid-column: 1;
   }
 
   .minimal-lightbox-panel,
   .minimal-lightbox-panel.poster,
   .minimal-lightbox-panel.landscape,
-  .minimal-lightbox-panel.panorama {
+  .minimal-lightbox-panel.panorama,
+  .minimal-lightbox-panel.portrait {
     width: calc(100vw - 28px);
     max-height: calc(100vh - 74px);
     padding: 10px;
@@ -1538,7 +1572,8 @@ body {
   .minimal-lightbox-panel img,
   .minimal-lightbox-panel.poster img,
   .minimal-lightbox-panel.landscape img,
-  .minimal-lightbox-panel.panorama img {
+  .minimal-lightbox-panel.panorama img,
+  .minimal-lightbox-panel.portrait img {
     max-height: calc(100vh - 160px);
   }
 }
