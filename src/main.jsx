@@ -274,19 +274,10 @@ function App() {
     <>
       <DynamicCrossField />
       <LineField />
-      <StoryTotem placement="ambient" />
-      <RanbiwaMotifs />
-      <ScrollNarrative />
       <SiteNav />
-      <main className="site-shell">
+      <main className="site-shell minimal-site">
         <Hero />
-        <ConceptIntro />
-        <ImmersiveStatement />
-        <Projects />
-        <StoryBridge />
-        <Experience />
-        <Approach />
-        <Strengths />
+        <VisualGallery />
         <Contact />
       </main>
     </>
@@ -301,9 +292,8 @@ function SiteNav() {
         <span>{profile.name}</span>
       </a>
       <div className="nav-links">
-        <a href="#projects">案例</a>
-        <a href="#approach">方法</a>
-        <a href="#experience">经历</a>
+        <a href="#top">封面</a>
+        <a href="#projects">作品</a>
         <a href="#contact">联系</a>
       </div>
       <a className="nav-contact" href={`mailto:${profile.email}`}>
@@ -699,91 +689,33 @@ function Hero() {
             ))}
           </div>
           <div className="crow-grain" />
-          <div className="crow-label-stack crow-content-stack" aria-hidden="true">
-            <article className="crow-label-card primary">
-              <em>AI Training Archive</em>
-              <strong>训练 AI，也训练方法</strong>
-              <small>从审美判断到可复用流程</small>
-            </article>
-            <article className="crow-label-card">
-              <em>Prompt Matrix</em>
-              <strong>把灵感拆成可复用指令</strong>
-              <small>关键词、限制、风格边界</small>
-            </article>
-            <article className="crow-label-card">
-              <em>Sample Board</em>
-              <strong>样本不是素材，是判断依据</strong>
-              <small>收集、筛选、对比、归档</small>
-            </article>
-            <article className="crow-label-card">
-              <em>Evaluation Rubric</em>
-              <strong>让好结果稳定发生</strong>
-              <small>审美标准、失败样本、交付规则</small>
-            </article>
-            <article className="crow-label-card">
-              <em>Delivery System</em>
-              <strong>把结果整理成团队能继续使用的方法</strong>
-              <small>模板、规范、复盘、交付资产</small>
-            </article>
-          </div>
-          <div className="crow-archive-note">
-            <span>Archive 01 / Folk Signal</span>
-            <strong>把偶然的好结果，训练成稳定的方法。</strong>
-          </div>
       </div>
 
       <div className="container hero-content">
         <div className="hero-kicker">
           <p className="eyebrow">AI Trainer Portfolio 2026</p>
-          <span>提示词 / 样本 / 评估 / 工作流</span>
+          <span>视觉设计 / AI 创意 / 品牌表达</span>
         </div>
         <h1>
           <span>训练 AI，也训练方法。</span>
           <span>让好结果稳定发生。</span>
         </h1>
         <div className="hero-tale-note">
-          <span>生成式 AI 训练与工作流作品集</span>
-          <span>GenAI Training Portfolio</span>
+          <span>视觉设计与 AI 创意作品集</span>
+          <span>Visual &amp; AI Portfolio</span>
         </div>
         <div className="hero-bottom">
           <p>
             {profile.title}
             <br />
-            将设计判断、提示词与评估标准整理成可复用的训练流程。
+            用视觉、叙事与 AI 创意，为想法建立可被记住的形状。
           </p>
           <div className="hero-actions">
             <a className="cta" href="#projects">
-              查看训练案例
+              查看作品
               <ArrowRight size={18} />
             </a>
-            <a className="hero-reel" href="#approach" aria-label="查看 AI 训练方法">
-              <span className="hero-reel-play">Flow</span>
-              <span>
-                <strong>AI Workflow</strong>
-                <small>define / train / evaluate / deliver</small>
-              </span>
-            </a>
           </div>
-        </div>
-        <div className="hero-tags" aria-label="训练能力关键词">
-          <span>提示词设计</span>
-          <span>样本组织</span>
-          <span>结果评估</span>
-          <span>流程复盘</span>
-        </div>
-        <div className="hero-proof-strip" aria-label="AI 训练能力">
-          <span>
-            <strong>01</strong>
-            Prompt System
-          </span>
-          <span>
-            <strong>02</strong>
-            Evaluation Criteria
-          </span>
-          <span>
-            <strong>03</strong>
-            Workflow Delivery
-          </span>
         </div>
       </div>
 
@@ -798,37 +730,9 @@ function Hero() {
       </div>
 
       <a className="hero-scroll-cue" href="#projects" aria-label="滚动查看训练案例">
-        <span>View training cases</span>
+        <span>View selected work</span>
         <i />
       </a>
-
-      <div className="hero-world-note" aria-hidden="true">
-        <span>Story System</span>
-        <strong>把输入、判断和生成结果连成一条可复用的路。</strong>
-      </div>
-
-      <div className="hero-experience-loop" aria-hidden="true">
-        <span>Prompt Structure</span>
-        <span>Sample Board</span>
-        <span>Evaluation Rubric</span>
-        <span>Iteration Log</span>
-        <span>Visual Judgment</span>
-      </div>
-
-      <div className="hero-mantra" aria-hidden="true">
-        <span>Define before generate</span>
-        <span>Train what good means</span>
-        <span>Make results repeatable</span>
-      </div>
-
-      <div className="hero-bottom-marquee" aria-hidden="true">
-        <span>AI Training</span>
-        <span>Visual System</span>
-        <span>Story Method</span>
-        <span>Prompt Design</span>
-        <span>Evaluation</span>
-        <span>Delivery</span>
-      </div>
     </section>
   );
 }
@@ -1748,24 +1652,101 @@ function Strengths() {
   );
 }
 
+function VisualGallery() {
+  const [previewImage, setPreviewImage] = useState(null);
+  const galleryItems = [
+    ...posterCases.map((item) => ({
+      image: item.image,
+      title: item.title,
+      layout: 'poster',
+    })),
+    ...renderCases.map((item, index) => ({
+      image: item.image,
+      title: item.title,
+      layout: index === renderCases.length - 1 ? 'panorama' : 'landscape',
+    })),
+  ];
+
+  useEffect(() => {
+    if (!previewImage) return undefined;
+
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setPreviewImage(null);
+    };
+
+    document.body.classList.add('is-preview-open');
+    document.addEventListener('keydown', closeOnEscape);
+
+    return () => {
+      document.body.classList.remove('is-preview-open');
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [previewImage]);
+
+  return (
+    <section className="minimal-gallery" id="projects" aria-labelledby="minimal-gallery-title">
+      <h2 className="minimal-gallery-title" id="minimal-gallery-title">作品集</h2>
+      <div className="container minimal-gallery-grid">
+        {galleryItems.map((item, index) => (
+          <figure
+            className={`minimal-work minimal-work-${index + 1} ${item.layout}`}
+            key={item.image}
+          >
+            <button
+              type="button"
+              onClick={() => setPreviewImage(item)}
+              aria-label={`放大查看 ${item.title}`}
+            >
+              <img src={item.image} alt={item.title} />
+            </button>
+          </figure>
+        ))}
+      </div>
+
+      {previewImage && createPortal(
+        <div
+          className="image-lightbox minimal-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${previewImage.title} 放大预览`}
+          onClick={() => setPreviewImage(null)}
+        >
+          <button
+            className="lightbox-close"
+            type="button"
+            autoFocus
+            onClick={() => setPreviewImage(null)}
+            aria-label="关闭图片放大预览"
+          >
+            关闭
+          </button>
+          <figure
+            className={`lightbox-panel minimal-lightbox-panel ${previewImage.layout}`}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <img src={previewImage.image} alt={previewImage.title} />
+            <figcaption>
+              <strong>{previewImage.title}</strong>
+            </figcaption>
+          </figure>
+        </div>,
+        document.body,
+      )}
+    </section>
+  );
+}
+
 function Contact() {
   return (
     <section className="contact-section section-full" id="contact">
       <div className="container contact-content">
-        <div className="paper-note contact-note">训练档案 / 联系入口</div>
-        <span className="chapter-marker inline">08</span>
-        <p className="eyebrow">Contact</p>
-        <h2>如果你需要把 AI 从偶然好用，训练成稳定可用，我们可以从一个任务开始。</h2>
+        <p className="eyebrow">End / Contact</p>
+        <h2>让下一个想法，成为值得被记住的作品。</h2>
         <div className="contact-actions">
           <a className="cta large" href={`mailto:${profile.email}`}>
-            开始聊聊 / Let&apos;s Talk
+            联系我 / Let&apos;s Talk
             <ArrowRight size={20} />
           </a>
-          <div className="social-links" aria-label="社交媒体">
-            {profile.social.map((item) => (
-              <a key={item} href="#top">{item}</a>
-            ))}
-          </div>
           <a className="ghost-link" href="#top">回到顶部</a>
         </div>
       </div>

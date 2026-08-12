@@ -1347,3 +1347,208 @@ body {
     transition: none;
   }
 }
+
+/* Minimal portfolio: cover, work images, closing page. */
+.minimal-site .hero-content {
+  padding-bottom: clamp(110px, 10vh, 170px);
+}
+
+.minimal-site .hero-actions {
+  width: fit-content;
+}
+
+.minimal-site .hero-actions .cta {
+  min-width: 188px;
+}
+
+.minimal-gallery {
+  position: relative;
+  z-index: 2;
+  padding: clamp(22px, 3vw, 52px) 0 clamp(110px, 10vw, 180px);
+  background: rgba(249, 247, 240, 0.92);
+  border-top: 1px solid var(--polish-rule);
+}
+
+.minimal-gallery-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.minimal-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(10px, 1.2vw, 20px);
+  align-items: start;
+}
+
+.minimal-work {
+  min-width: 0;
+  margin: 0;
+}
+
+.minimal-work-1,
+.minimal-work-2,
+.minimal-work-4,
+.minimal-work-5 {
+  grid-column: span 6;
+}
+
+.minimal-work-3,
+.minimal-work-6 {
+  grid-column: 1 / -1;
+}
+
+.minimal-work button {
+  position: relative;
+  display: grid;
+  width: 100%;
+  padding: clamp(7px, 0.8vw, 13px);
+  overflow: hidden;
+  border: 1px solid rgba(62, 49, 38, 0.13);
+  border-radius: 4px;
+  background: rgba(255, 254, 250, 0.78);
+  box-shadow: 0 12px 34px rgba(54, 42, 31, 0.055);
+  cursor: zoom-in;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+}
+
+.minimal-work.poster button {
+  aspect-ratio: 2 / 3;
+}
+
+.minimal-work.landscape button {
+  aspect-ratio: 16 / 9;
+}
+
+.minimal-work.panorama button {
+  aspect-ratio: 1280 / 284;
+}
+
+.minimal-work img {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  object-fit: contain;
+  background: rgba(240, 237, 228, 0.44);
+}
+
+.minimal-work button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 52px rgba(54, 42, 31, 0.1);
+}
+
+.minimal-work button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.minimal-lightbox-panel,
+.minimal-lightbox-panel.poster,
+.minimal-lightbox-panel.landscape,
+.minimal-lightbox-panel.panorama {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: min(94vw, 1540px);
+  max-height: calc(100vh - 72px);
+  padding: 14px;
+  overflow: auto;
+  background: rgba(252, 250, 245, 0.98);
+}
+
+.minimal-lightbox-panel.poster {
+  width: min(92vw, 820px);
+}
+
+.minimal-lightbox-panel img,
+.minimal-lightbox-panel.poster img,
+.minimal-lightbox-panel.landscape img,
+.minimal-lightbox-panel.panorama img {
+  width: 100%;
+  height: auto;
+  max-height: calc(100vh - 140px);
+  object-fit: contain;
+  background: transparent;
+}
+
+.minimal-lightbox-panel figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 12px 4px 0;
+  color: rgba(32, 27, 23, 0.72);
+}
+
+.minimal-lightbox-panel figcaption strong {
+  font-size: clamp(17px, 1.4vw, 23px);
+  font-weight: 500;
+}
+
+.minimal-site .contact-section {
+  min-height: 100svh;
+}
+
+.minimal-site .contact-content {
+  max-width: 1320px;
+}
+
+.minimal-site .contact-content h2 {
+  max-width: 1050px;
+}
+
+@media (max-width: 760px) {
+  .minimal-site .hero-content {
+    padding-bottom: 360px;
+  }
+
+  .minimal-gallery {
+    padding-top: 10px;
+  }
+
+  .minimal-gallery-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .minimal-work-1,
+  .minimal-work-2,
+  .minimal-work-3,
+  .minimal-work-4,
+  .minimal-work-5,
+  .minimal-work-6 {
+    grid-column: 1;
+  }
+
+  .minimal-lightbox-panel,
+  .minimal-lightbox-panel.poster,
+  .minimal-lightbox-panel.landscape,
+  .minimal-lightbox-panel.panorama {
+    width: calc(100vw - 28px);
+    max-height: calc(100vh - 74px);
+    padding: 10px;
+  }
+
+  .minimal-lightbox-panel img,
+  .minimal-lightbox-panel.poster img,
+  .minimal-lightbox-panel.landscape img,
+  .minimal-lightbox-panel.panorama img {
+    max-height: calc(100vh - 160px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .minimal-work button {
+    transition: none;
+  }
+
+  .minimal-work button:hover {
+    transform: none;
+  }
+}
