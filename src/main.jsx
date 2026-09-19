@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import {
   ArrowRight,
+  ArrowLeft,
+  X,
   BrainCircuit,
   BriefcaseBusiness,
   Layers3,
@@ -12,6 +14,7 @@ import {
 } from 'lucide-react';
 import './styles.css';
 import './polish.css';
+import uploadedWorks from './uploaded-works.json';
 
 const assetUrl = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;
 
@@ -1691,7 +1694,9 @@ function Strengths() {
 }
 
 function VisualGallery() {
-  const [previewImage, setPreviewImage] = useState(null);
+  const [previewIndex, setPreviewIndex] = useState(null);
+  const dialogRef = useRef(null);
+  const triggerRef = useRef(null);
   const galleryItems = [
     ...posterCases.map((item) => ({
       image: item.image,
@@ -1703,24 +1708,44 @@ function VisualGallery() {
       title: item.title,
       layout: index === renderCases.length - 1 ? 'panorama' : 'landscape',
     })),
-    ...collectionCases,
+    ...collectionCases.map((item, index) => ({ ...item, centered: index === collectionCases.length - 1 })),
+    ...uploadedWorks.map((item) => ({ ...item, image: assetUrl(item.image), thumbnail: assetUrl(item.thumbnail) })),
   ];
+  const previewImage = previewIndex === null ? null : galleryItems[previewIndex];
+  const isPreviewOpen = previewIndex !== null;
+  const movePreview = (direction) => setPreviewIndex((index) => index === null ? null : (index + direction + galleryItems.length) % galleryItems.length);
 
   useEffect(() => {
-    if (!previewImage) return undefined;
-
-    const closeOnEscape = (event) => {
-      if (event.key === 'Escape') setPreviewImage(null);
+    if (!isPreviewOpen) return undefined;
+    dialogRef.current?.showModal();
+    const handleKeys = (event) => {
+      if (event.key === 'Tab') {
+        const buttons = dialogRef.current?.querySelectorAll('button');
+        const first = buttons?.[0];
+        const last = buttons?.[buttons.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
+      }
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault();
+        setPreviewIndex((index) => (index + (event.key === 'ArrowRight' ? 1 : -1) + galleryItems.length) % galleryItems.length);
+      }
     };
 
     document.body.classList.add('is-preview-open');
-    document.addEventListener('keydown', closeOnEscape);
+    document.addEventListener('keydown', handleKeys);
 
     return () => {
       document.body.classList.remove('is-preview-open');
-      document.removeEventListener('keydown', closeOnEscape);
+      document.removeEventListener('keydown', handleKeys);
+      triggerRef.current?.focus({ preventScroll: true });
     };
-  }, [previewImage]);
+  }, [isPreviewOpen, galleryItems.length]);
 
   return (
     <section className="minimal-gallery" id="projects" aria-labelledby="minimal-gallery-title">
@@ -1728,16 +1753,21 @@ function VisualGallery() {
       <div className="container minimal-gallery-grid">
         {galleryItems.map((item, index) => (
           <figure
-            className={`minimal-work minimal-work-${index + 1} ${item.layout}`}
+            className={`minimal-work ${item.layout === 'portrait' ? 'work-portrait' : item.layout}${item.centered ? ' centered' : ''}${item.sectionStart ? ' group-start' : ''}`}
             key={item.image}
           >
             <button
               type="button"
-              onClick={() => setPreviewImage(item)}
+              onClick={(event) => { triggerRef.current = event.currentTarget; setPreviewIndex(index); }}
+              style={item.width ? { aspectRatio: `${item.width} / ${item.height}` } : undefined}
               aria-label={`放大查看 ${item.title}`}
             >
               <img
-                src={item.image}
+                src={item.thumbnail || item.image}
+                srcSet={item.thumbnail ? `${item.thumbnail} ${item.thumbnailWidth}w, ${item.image} ${item.width}w` : undefined}
+                sizes="(max-width: 760px) calc(100vw - 32px), (max-width: 1400px) 46vw, 640px"
+                width={item.width}
+                height={item.height}
                 alt={item.title}
                 loading={index < 2 ? 'eager' : 'lazy'}
                 decoding="async"
@@ -1749,32 +1779,37 @@ function VisualGallery() {
       </div>
 
       {previewImage && createPortal(
-        <div
+        <dialog
+          ref={dialogRef}
           className="image-lightbox minimal-lightbox"
-          role="dialog"
-          aria-modal="true"
           aria-label={`${previewImage.title} 放大预览`}
-          onClick={() => setPreviewImage(null)}
+          onCancel={() => setPreviewIndex(null)}
+          onClose={() => setPreviewIndex(null)}
+          onClick={(event) => { if (event.target === event.currentTarget) setPreviewIndex(null); }}
         >
           <button
             className="lightbox-close"
             type="button"
             autoFocus
-            onClick={() => setPreviewImage(null)}
+            onClick={() => setPreviewIndex(null)}
             aria-label="关闭图片放大预览"
+            title="关闭 (Esc)"
           >
-            关闭
+            <X size={22} />
           </button>
+          <button className="lightbox-previous" type="button" onClick={() => movePreview(-1)} aria-label="上一张" title="上一张"><ArrowLeft size={22} /></button>
+          <button className="lightbox-next" type="button" onClick={() => movePreview(1)} aria-label="下一张" title="下一张"><ArrowRight size={22} /></button>
           <figure
-            className={`lightbox-panel minimal-lightbox-panel ${previewImage.layout}`}
+            className={`lightbox-panel minimal-lightbox-panel ${previewImage.layout === 'portrait' ? 'work-portrait' : previewImage.layout}`}
             onClick={(event) => event.stopPropagation()}
           >
-            <img src={previewImage.image} alt={previewImage.title} />
+            <img key={previewImage.image} src={previewImage.image} alt={previewImage.title} />
             <figcaption>
               <strong>{previewImage.title}</strong>
+              <span className="lightbox-count" aria-live="polite">{previewIndex + 1} / {galleryItems.length}</span>
             </figcaption>
           </figure>
-        </div>,
+        </dialog>,
         document.body,
       )}
     </section>
