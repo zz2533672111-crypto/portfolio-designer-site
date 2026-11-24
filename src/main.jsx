@@ -335,6 +335,7 @@ const chapters = [
 function App() {
   return (
     <>
+      <DynamicCrossField />
       <SiteNav />
       <main className="site-shell minimal-site">
         <Hero />
@@ -520,6 +521,7 @@ function DynamicCrossField({ variant = 'page' }) {
   const isHero = variant === 'hero';
   const baseOpacity = isHero ? 0.46 : 0.42;
   const [points, setPoints] = useState([]);
+  const fieldRef = useRef(null);
   const crossRefs = useRef([]);
   const mouseRef = useRef({ x: -9999, y: -9999 });
   const frameRef = useRef(0);
@@ -555,7 +557,11 @@ function DynamicCrossField({ variant = 'page' }) {
   }, [isHero]);
 
   useEffect(() => {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
     const resetCrosses = () => {
+      if (frameRef.current) window.cancelAnimationFrame(frameRef.current);
+      frameRef.current = 0;
       crossRefs.current.forEach((cross) => {
         if (!cross) return;
         cross.style.transform = 'translate3d(0, 0, 0) rotate(0deg) scale(1)';
@@ -564,12 +570,12 @@ function DynamicCrossField({ variant = 'page' }) {
     };
 
     const updateCrosses = () => {
-      const { x: mouseX, y: mouseY } = mouseRef.current;
-      if (isHero && window.scrollY > window.innerHeight * 1.05) {
-        frameRef.current = 0;
-        return;
-      }
+      frameRef.current = 0;
+      const bounds = fieldRef.current?.getBoundingClientRect();
+      if (!bounds || bounds.bottom <= 0 || bounds.top >= window.innerHeight) return;
 
+      const mouseX = mouseRef.current.x - bounds.left;
+      const mouseY = mouseRef.current.y - bounds.top;
       const radius = isHero ? 184 : 172;
       const strength = isHero ? 28 : 32;
 
@@ -597,10 +603,10 @@ function DynamicCrossField({ variant = 'page' }) {
         }
       });
 
-      frameRef.current = 0;
     };
 
     const handleMove = (event) => {
+      if (reducedMotion.matches || event.pointerType === 'touch') return;
       mouseRef.current = { x: event.clientX, y: event.clientY };
       if (!frameRef.current) {
         frameRef.current = window.requestAnimationFrame(updateCrosses);
@@ -616,11 +622,12 @@ function DynamicCrossField({ variant = 'page' }) {
       window.removeEventListener('pointerleave', resetCrosses);
       window.removeEventListener('blur', resetCrosses);
       if (frameRef.current) window.cancelAnimationFrame(frameRef.current);
+      frameRef.current = 0;
     };
   }, [baseOpacity, isHero, points]);
 
   return (
-    <div className={`cross-field ${isHero ? 'hero-cross-field' : 'page-cross-field'}`} aria-hidden="true">
+    <div ref={fieldRef} className={`cross-field ${isHero ? 'hero-cross-field' : 'page-cross-field'}`} aria-hidden="true">
       {points.map((point, index) => (
         <span
           className="cross-dot"
@@ -729,6 +736,7 @@ function HeroMotionClip() {
 function Hero() {
   return (
     <section className="hero section-full" id="top">
+      <DynamicCrossField variant="hero" />
       <div className="container hero-content">
         <div className="hero-copy">
           <p className="hero-kicker">视觉设计 / AI 创意 / 品牌表达</p>
@@ -1669,6 +1677,52 @@ function Strengths() {
   );
 }
 
+function WorkFrame({ width, height, seed }) {
+  const shortSide = 320;
+  const ratio = width / height;
+  const frameWidth = shortSide * Math.max(1, ratio);
+  const frameHeight = shortSide * Math.max(1, 1 / ratio);
+  const inset = 4;
+  const left = inset;
+  const right = frameWidth - inset;
+  const top = inset;
+  const bottom = frameHeight - inset;
+  const corner = (position) => 9 + ((seed * (position + 3) + position * 7) % 8);
+  const [tl, tr, br, bl] = [0, 1, 2, 3].map(corner);
+
+  // Each edge keeps its direction while the ink line drifts slightly between corners.
+  const edge = (x1, y1, x2, y2, side) => {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const length = Math.hypot(dx, dy);
+    const segments = Math.ceil(length / 13);
+    return Array.from({ length: segments }, (_, index) => {
+      const progress = (index + 1) / segments;
+      const phase = (seed + 1) * 0.83 + side * 2.2 + index * 1.91;
+      const drift = Math.sin(progress * Math.PI) * (1.05 * Math.sin(phase) + 0.58 * Math.sin(phase * 2.67));
+      return `L${(x1 + dx * progress - dy / length * drift).toFixed(2)} ${(y1 + dy * progress + dx / length * drift).toFixed(2)}`;
+    }).join(' ');
+  };
+
+  const outline = [
+    `M${left + tl} ${top}`,
+    edge(left + tl, top, right - tr, top, 0),
+    `Q${right} ${top} ${right} ${top + tr}`,
+    edge(right, top + tr, right, bottom - br, 1),
+    `Q${right} ${bottom} ${right - br} ${bottom}`,
+    edge(right - br, bottom, left + bl, bottom, 2),
+    `Q${left} ${bottom} ${left} ${bottom - bl}`,
+    edge(left, bottom - bl, left, top + tl, 3),
+    `Q${left} ${top} ${left + tl} ${top}Z`,
+  ].join(' ');
+
+  return (
+    <svg className="work-frame" aria-hidden="true" viewBox={`0 0 ${frameWidth} ${frameHeight}`} preserveAspectRatio="none">
+      <path d={outline} vectorEffect="non-scaling-stroke" />
+    </svg>
+  );
+}
+
 function VisualGallery() {
   const [previewIndex, setPreviewIndex] = useState(null);
   const dialogRef = useRef(null);
@@ -1749,6 +1803,7 @@ function VisualGallery() {
                 decoding="async"
                 fetchPriority={index === 0 ? 'high' : 'auto'}
               />
+              <WorkFrame width={item.width} height={item.height} seed={item.id ?? index + 100} />
             </button>
           </figure>
         ))}

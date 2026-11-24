@@ -1354,6 +1354,7 @@ body {
   --gallery-ink: #181818;
   --gallery-muted: #565656;
   --gallery-rule: #cdcdcd;
+  --gallery-frame-ink: #4a4067;
 }
 
 body:has(.minimal-site) {
@@ -1404,7 +1405,18 @@ body:has(.minimal-site) .nav-contact {
   background: var(--gallery-paper);
 }
 
+.minimal-site .hero-cross-field {
+  z-index: 0;
+  opacity: 0.74;
+}
+
+.page-cross-field {
+  opacity: 0.58;
+}
+
 .minimal-site .hero-content {
+  position: relative;
+  z-index: 1;
   min-height: min(87svh, 920px);
   display: grid;
   grid-template-columns: minmax(0, 1.16fr) minmax(0, 1fr);
@@ -1484,6 +1496,7 @@ body:has(.minimal-site) .nav a:focus-visible {
   aspect-ratio: 1;
   border: 1px solid #bdbdbd;
   border-radius: 50%;
+  background: rgba(250, 250, 250, 0.82);
   pointer-events: none;
 }
 
@@ -1524,7 +1537,6 @@ body:has(.minimal-site) .nav a:focus-visible {
   position: relative;
   z-index: 2;
   padding: clamp(24px, 4vw, 60px) 0 clamp(64px, 8vw, 120px);
-  background: var(--gallery-paper);
   border-top: 1px solid var(--gallery-rule);
 }
 
@@ -1577,15 +1589,28 @@ body:has(.minimal-site) .nav a:focus-visible {
 .minimal-work.group-start + .minimal-work { margin-top: clamp(26px, 4vw, 56px); }
 
 .minimal-work button {
+  position: relative;
   display: block;
   width: 100%;
-  padding: 8px;
-  border: 1px solid var(--gallery-rule);
-  border-radius: 0;
+  padding: clamp(13px, 1.45vw, 24px);
+  border: 0;
+  border-radius: 8px;
   background: #fff;
   box-shadow: none;
   cursor: zoom-in;
-  transition: border-color 0.18s ease;
+}
+
+.work-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--gallery-frame-ink);
+  stroke-width: 1.6px;
+  stroke-linejoin: round;
+  transition: stroke 0.18s ease;
 }
 
 .minimal-work img {
@@ -1595,8 +1620,8 @@ body:has(.minimal-site) .nav a:focus-visible {
   object-fit: contain;
 }
 
-.minimal-work button:hover {
-  border-color: #777;
+.minimal-work button:hover .work-frame {
+  stroke: var(--gallery-ink);
 }
 
 dialog.minimal-lightbox {
@@ -1714,7 +1739,7 @@ dialog.minimal-lightbox::backdrop { background: transparent; }
   min-height: auto;
   border-top: 1px solid var(--gallery-rule);
   color: var(--gallery-ink);
-  background: #fff;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .minimal-site .contact-section::before,
@@ -1790,7 +1815,8 @@ dialog.minimal-lightbox::backdrop { background: transparent; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .minimal-work button {
+  .work-frame,
+  .cross-field .cross-dot {
     transition: none;
   }
 }
