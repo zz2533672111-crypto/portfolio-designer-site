@@ -112,24 +112,32 @@ const posterCases = projects
 const renderCases = [
   {
     image: assetUrl('work-images/osmanthus-exterior-01.jpg'),
+    width: 1280,
+    height: 667,
     title: '桂花空间外部主视觉',
     type: 'Exterior Render',
     label: '整体空间效果',
   },
   {
     image: assetUrl('work-images/osmanthus-interior-01.jpg'),
+    width: 1280,
+    height: 720,
     title: '桂花空间室内动线',
     type: 'Interior Render',
     label: '沉浸体验路线',
   },
   {
     image: assetUrl('work-images/osmanthus-exterior-02.jpg'),
+    width: 1920,
+    height: 1080,
     title: '桂花空间俯视结构',
     type: 'Top View Render',
     label: '结构与节点关系',
   },
   {
     image: assetUrl('work-images/spatial-render-01.jpg'),
+    width: 1280,
+    height: 284,
     title: '展厅氛围效果图',
     type: 'Atmosphere Render',
     label: '空间情绪与收尾',
@@ -139,36 +147,50 @@ const renderCases = [
 const collectionCases = [
   {
     image: assetUrl('work-images/collection-01.webp'),
+    width: 1122,
+    height: 1402,
     title: 'Junior Style 杂志封面',
     layout: 'portrait',
   },
   {
     image: assetUrl('work-images/collection-02.webp'),
+    width: 1122,
+    height: 1402,
     title: 'Lumiere 杂志封面',
     layout: 'portrait',
   },
   {
     image: assetUrl('work-images/collection-03.webp'),
+    width: 1448,
+    height: 1086,
     title: '双生河畔摄影',
     layout: 'landscape',
   },
   {
     image: assetUrl('work-images/collection-04.webp'),
+    width: 1122,
+    height: 1402,
     title: '金色逆光肖像',
     layout: 'portrait',
   },
   {
     image: assetUrl('work-images/collection-05.webp'),
+    width: 1122,
+    height: 1402,
     title: 'Kinfolk 镜面人像封面',
     layout: 'portrait',
   },
   {
     image: assetUrl('work-images/collection-06.jpg'),
+    width: 1706,
+    height: 1280,
     title: '海边纪实摄影',
     layout: 'landscape',
   },
   {
     image: assetUrl('work-images/collection-07.webp'),
+    width: 1024,
+    height: 1536,
     title: '飞鱼之海另一版海报',
     layout: 'poster',
   },
@@ -313,8 +335,6 @@ const chapters = [
 function App() {
   return (
     <>
-      <DynamicCrossField />
-      <LineField />
       <SiteNav />
       <main className="site-shell minimal-site">
         <Hero />
@@ -709,71 +729,27 @@ function HeroMotionClip() {
 function Hero() {
   return (
     <section className="hero section-full" id="top">
-      <div className="video-backdrop" aria-hidden="true">
-        <div className="motion-fallback" />
-        <FolkMotionScene />
-        <NarrativePortal />
-      </div>
-      <DynamicCrossField variant="hero" />
-      <div className="crow-spiral-stage static-crow" aria-hidden="true">
-          <ExtractedSpiral />
-          <div className="crow-ink-wash" />
-          <div className="crow-vignette" />
-          <div className="crow-rings">
-            <span />
-            <span />
-            <span />
-          </div>
-          <div className="crow-sparks">
-            {Array.from({ length: 18 }).map((_, index) => (
-              <span key={`crow-spark-${index}`} />
-            ))}
-          </div>
-          <div className="crow-grain" />
-      </div>
-
       <div className="container hero-content">
-        <div className="hero-kicker">
-          <p className="eyebrow">AI Trainer Portfolio 2026</p>
-          <span>视觉设计 / AI 创意 / 品牌表达</span>
-        </div>
-        <h1>
-          <span>训练 AI，也训练方法。</span>
-          <span>让好结果稳定发生。</span>
-        </h1>
-        <div className="hero-tale-note">
-          <span>视觉设计与 AI 创意作品集</span>
-          <span>Visual &amp; AI Portfolio</span>
-        </div>
-        <div className="hero-bottom">
-          <p>
-            {profile.title}
-            <br />
-            用视觉、叙事与 AI 创意，为想法建立可被记住的形状。
-          </p>
-          <div className="hero-actions">
-            <a className="cta" href="#projects">
-              查看作品
-              <ArrowRight size={18} />
-            </a>
+        <div className="hero-copy">
+          <p className="hero-kicker">视觉设计 / AI 创意 / 品牌表达</p>
+          <h1>
+            <span>训练 AI，也训练方法。</span>
+            <span>让好结果稳定发生。</span>
+          </h1>
+          <div className="hero-bottom">
+            <p>用视觉、叙事与 AI 创意，为想法建立可被记住的形状。</p>
+            <div className="hero-actions">
+              <a className="cta" href="#projects">
+                查看作品
+                <ArrowRight size={18} />
+              </a>
+            </div>
           </div>
         </div>
+        <div className="hero-circle" aria-hidden="true">
+          <ExtractedSpiral />
+        </div>
       </div>
-
-      <div className="hero-seal" aria-hidden="true">
-        <span>荒</span>
-        <span>谣</span>
-      </div>
-
-      <div className="hero-index" aria-hidden="true">
-        <span>01</span>
-        <span>Scroll</span>
-      </div>
-
-      <a className="hero-scroll-cue" href="#projects" aria-label="滚动查看训练案例">
-        <span>View selected work</span>
-        <i />
-      </a>
     </section>
   );
 }
@@ -1702,10 +1678,11 @@ function VisualGallery() {
       image: item.image,
       title: item.title,
       layout: 'poster',
+      width: 1024,
+      height: 1536,
     })),
     ...renderCases.map((item, index) => ({
-      image: item.image,
-      title: item.title,
+      ...item,
       layout: index === renderCases.length - 1 ? 'panorama' : 'landscape',
     })),
     ...collectionCases.map((item, index) => ({ ...item, centered: index === collectionCases.length - 1 })),
@@ -1759,7 +1736,6 @@ function VisualGallery() {
             <button
               type="button"
               onClick={(event) => { triggerRef.current = event.currentTarget; setPreviewIndex(index); }}
-              style={item.width ? { aspectRatio: `${item.width} / ${item.height}` } : undefined}
               aria-label={`放大查看 ${item.title}`}
             >
               <img
